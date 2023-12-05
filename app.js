@@ -68,7 +68,7 @@ app.get('/deleteUsers', async (req, res) => {
     const deleteProfileResult = await userProfileCollection.deleteMany({ age: { $gte: ageThreshold } });
 
    
-    const userIdsToDelete = usersToDelete.map(user => user.userId); // Assuming there's a userId field in the user profiles
+    const userIdsToDelete = usersToDelete.map(user => user.userId); 
     const deleteUserResult = await usersCollection.deleteMany({ _id: { $in: userIdsToDelete } });
 
     res.json({ deletedProfilesCount: deleteProfileResult.deletedCount, deletedUsersCount: deleteUserResult.deletedCount });
