@@ -1,13 +1,20 @@
-const express = require('express')
-const mongodb = require('mongodb')
+const express = require('express');
+const connectAndInsertData = require('./db');
+const usersData = require('./userdata.json').usersData;
+const userProfileData = require('./userprofile.json').userProfileData;
 
-const app = express()
-let db
+const app = express();
+const PORT = 5000;
 
-const PORT = 5000
-
-app.get('/testRoute', (req, res) => res.end('Hello from Server!'))
+app.get('/insertData', async (req, res) => {
+  try {
+    await connectAndInsertData(usersData, userProfileData);
+    res.send('Data inserted into MongoDB collections.');
+  } catch (err) {
+    res.status(500).send('Error inserting data.');
+  }
+});
 
 app.listen(PORT, () => {
-  console.log(`Node.js App running on port ${PORT}...`)
-})
+  console.log(`Node.js App running on port ${PORT}...`);
+});

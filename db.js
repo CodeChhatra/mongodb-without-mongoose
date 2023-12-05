@@ -1,33 +1,31 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient } = require('mongodb');
 
-const uri = "mongodb+srv://rahul:Yg6i3prvrBgSF4ay@cluster0.io54nr3.mongodb.net/?retryWrites=true&w=majority";
+const uri = "mongodb+srv://rahul:Yg6i3prvrBgSF4ay@cluster0.io54nr3.mongodb.net/?retryWrites=true&w=majority"
+const client = new MongoClient(uri);
 
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
-
-async function run() {
+async function connectAndInsertData(usersData, userProfileData) {
   try {
     await client.connect();
-    // console.log("Connected to MongoDB!");
+    // console.log('Connected to MongoDB!');
 
-    // Function to list databases
-    async function listDatabases() {
-      const databasesList = await client.db().admin().listDatabases();
-      console.log("Databases:");
-      databasesList.databases.forEach((db) => {
-        console.log(`- ${db.name}`);
-      });
-    }
+    const db = client.db('test');
+    const usersCollection = db.collection('Users');
+    const userProfileCollection = db.collection('UsersProfile');
 
-    await listDatabases();
+    // Insert users data into Users collection
+    await usersCollection.insertMany(usersData);
+    console.log('Users data inserted.');
+
+    // Insert user profile data into UsersProfile collection
+    await userProfileCollection.insertMany(userProfileData);
+    console.log('User profiles data inserted.');
+  } catch (err) {
+    console.error('Error inserting data:', err);
+    console.error(err.stack);
   } finally {
     await client.close();
-    console.log("Connection closed.");
+    console.log('Connection closed.');
   }
 }
-run().catch(console.dir);
+
+module.exports = connectAndInsertData;
